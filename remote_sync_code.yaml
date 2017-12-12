@@ -1,0 +1,6 @@
+- remote: "~/Code/libmoon"
+  local: !relpath "../libmoon"
+- remote: "~/Code/benchmarks"
+  local: !relpath "../benchmarks"
+- remote: "~/Code/testbed_scripts"
+  local: !relpath "../testbed_scripts"

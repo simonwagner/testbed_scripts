@@ -1,0 +1,14 @@
+libmoon:
+    host: "narva"
+    image: "ubuntu-xenial"
+    dir: "/home/wagnersi/Code/libmoon/"
+    testdir: "/root/testbed/"
+benchmarks:
+    host: "klaipeda"
+    image: "ubuntu-xenial"
+    dir: "/home/wagnersi/Code/benchmarks/"
+    testdir: "/root/testbed/"
+controller:
+    logdir: !relpath "../logs/"
+    resultsdir: !relpath "../results/"
+    node_dependencies: ["rsync"]

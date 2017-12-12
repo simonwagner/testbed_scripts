@@ -24,7 +24,6 @@ DPDKConfig {
 	--}
 	--pciWhitelist = {"0000:04:00.0"},
 	--coreMapping = "(0,1,2,3)@0,(4,5)@1,(6,7)@2"
-    
-    pciWhitelist = {"$LIBMOON_IF_PCI_ADDRESS"},
+
     coreMapping = "$LIBMOON_CORE_MAPPING"
 }

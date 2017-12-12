@@ -1,1 +1,2 @@
-. "${DIR}/conf_base.sh"
+include:
+    - [file: "base.yml", update: ["libmoon", "benchmarks"]]
