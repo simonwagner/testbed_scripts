@@ -16,7 +16,7 @@ class ConfigLoader(yaml.Loader):
         return os.path.abspath(filename)
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument("--host", "-H", required=True)
+argparser.add_argument("--host", "-H", nargs="+", dest="hosts", required=True)
 argparser.add_argument("--user", "-u", required=True)
 argparser.add_argument("--config", "-c", type=argparse.FileType(), required=True)
 
@@ -40,9 +40,10 @@ def main():
         if not local.endswith("/"):
             local += "/"
         
-        rsync[local, "{user}@{host}:{remote}".format(user=args.user,
-                                                     host=args.host,
-                                                     remote=remote)] & FG
+        for host in args.hosts:
+            rsync[local, "{user}@{host}:{remote}".format(user=args.user,
+                                                         host=host,
+                                                         remote=remote)] & FG
 
 if __name__ == "__main__":
     main()

@@ -36,7 +36,7 @@ argparser = argparse.ArgumentParser()
 argparser.add_argument("input_csvs", nargs="*", metavar="CSV")
 argparser.add_argument("-o", "--output")
 argparser.add_argument("-f", "--format", choices=["pdf", "pgf", "png", "tikz", "tex"])
-argparser.add_argument("--max-speed-mbit", type=float, default=1000)
+argparser.add_argument("--max-speed-mbit", type=float, default=10000)
 
 CSV_FILENAME_RE = re.compile(r".*cores_(\d+)_conn_(\d+)_sndbuff_(\d+)\.csv$")
 
@@ -68,6 +68,8 @@ def main():
     ax.set_ylim(ymin=0.0, ymax=args.max_speed_mbit*1.1) # 10% over line rate
     ax.set_ylabel("throughput [Mbit/s]")
     ax.set_xlabel("connections")
+
+    plt.tight_layout()
     
     if args.format == "tikz" or args.format == "tex":
         tikz_save(output_fname, figure=f, figureheight='4.5cm', figurewidth='10cm')

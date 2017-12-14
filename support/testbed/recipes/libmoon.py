@@ -83,7 +83,7 @@ def hyperthreading_core_mapping_for_machine(machine, start_at=0, exclude=set()):
 
 def available_mtcp_cores(machine):
     thread_siblings_list = thread_siblings_on_machine(machine, exclude=MTCP_EXCLUDE_CORES)
-    return sum(len(thread_siblings) for thread_siblings in thread_siblings_list)
+    return sum(len(thread_siblings) for thread_siblings in thread_siblings_list)/2
 
 def thread_siblings_on_machine(machine, exclude=set()):
     cpus = cpus_on_machine(machine)

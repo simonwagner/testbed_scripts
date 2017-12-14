@@ -21,6 +21,8 @@ logger = logging.getLogger("testbed.test")
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--config", default=testbed.conf.default_conf_path_for_script(__file__))
 argparser.add_argument("--skip-boot", action="store_true")
+argparser.add_argument("--skip-prepare", action="store_true")
+argparser.add_argument("--skip-compile-libmoon", action="store_true")
 argparser.add_argument("--force-node-allocation", "-f", action="store_true")
 
 def main():
@@ -38,15 +40,18 @@ def main():
             libmoon_host.boot(config.libmoon.image)
         
         #install base requirements
-        testbed.recipes.controller.install_base_packages(config, hosts=[libmoon_host])
+        if not args.skip_prepare:
+            testbed.recipes.controller.install_base_packages(config, hosts=[libmoon_host])
         #prepare libmoon
         libmoon_remote_dir = os.path.join(config.libmoon.testdir, "libmoon")
-        libmoon_host.push(config.libmoon.dir, libmoon_remote_dir, make_dir=True)
+        libmoon_host.push(config.libmoon.dir, libmoon_remote_dir, make_dir=True, delete=not args.skip_compile_libmoon)
         
         #compile libmoon
         with make_default_machine(libmoon_host.machine):
-            testbed.recipes.libmoon.install_deps()
-            testbed.recipes.libmoon.compile(libmoon_remote_dir, logdir=logdir)
+            if not args.skip_prepare:
+                testbed.recipes.libmoon.install_deps()
+            if not args.skip_compile_libmoon:
+                testbed.recipes.libmoon.compile(libmoon_remote_dir, logdir=logdir)
 
 if __name__ == "__main__":
     main()

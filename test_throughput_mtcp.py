@@ -119,11 +119,12 @@ def result_file_name_for(cores, concurrency, sendbuffer):
 
 def run(libmoon_host, benchmarks_host, config, logdir, resultsdir):
     for cores in range(1, testbed.recipes.libmoon.available_mtcp_cores(libmoon_host.machine) + 1):
-        concurrency = 100
-        run_test(libmoon_host, benchmarks_host, config, logdir, 
-                 concurrency=concurrency,
-                 cores=cores,
-                 resultfile=os.path.join(resultsdir, result_file_name_for(cores=cores, concurrency=concurrency, sendbuffer=0)))
+        #[10, 50, 100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500]
+        for concurrency in xrange(1, 200, 5):
+            run_test(libmoon_host, benchmarks_host, config, logdir, 
+                     concurrency=concurrency/cores,
+                     cores=cores,
+                     resultfile=os.path.join(resultsdir, result_file_name_for(cores=cores, concurrency=concurrency/cores*cores, sendbuffer=0)))
 
 def run_test(libmoon_host, benchmarks_host, config, logdir, resultfile, concurrency, cores):
     benchmarks_logger = benchmarks_host.getLogger("testbed.test")
@@ -131,9 +132,9 @@ def run_test(libmoon_host, benchmarks_host, config, logdir, resultfile, concurre
     
     executor = ThreadPoolExecutor(max_workers=2)
     benchmark_future, benchmark_pidfile = start_server_benchmark(executor, benchmarks_host, config, logdir, resultfile="/tmp/result.csv")
-    time.sleep(0.5) # wait a while, so we can be sure that the benchmark is running
+    time.sleep(1) # wait a while, so we can be sure that the benchmark is running
     libmoon_future, libmoon_pidfile = start_libmoon(executor, libmoon_host, config, logdir, concurrency=concurrency, cores=cores)
-    time.sleep(25)
+    time.sleep(90)
     
     #stop benchmark
     if not benchmark_future.ready():
@@ -157,7 +158,7 @@ def run_test(libmoon_host, benchmarks_host, config, logdir, resultfile, concurre
 def start_libmoon(executor, libmoon_host, config, logdir, concurrency, cores, log_postfix=""):
     libmoon_logger = libmoon_host.getLogger("testbed.test")
     libmoon_path = os.path.join(config.libmoon.testdir, "libmoon", "build", "libmoon")
-    libmoon_script_path = os.path.join(config.libmoon.testdir, "libmoon", "examples", "mtcp", "mtcp-echo.lua")
+    libmoon_script_path = os.path.join(config.libmoon.testdir, "libmoon", "examples", "mtcp", "mtcp-client.lua")
     libmoon_config_path = os.path.join(config.libmoon.testdir, "dpdk-config.lua")
     
     #write config
